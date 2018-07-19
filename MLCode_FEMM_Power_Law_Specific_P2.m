@@ -1,21 +1,25 @@
-%This program is used for calculation of FEMM Data for Smectite Clay simulation (Surface)
-%This program was started by Aydin Wells 8/10/17
+%This program is used for calculation of FEMM Data for Smectite Clay
+    %simulation (Surface)with an included power law for conductivity
+    %This program was started by Aydin Wells 7/2/2018
 
-    %Notes:Program assumes there are 4 "z" distances under a specific frequency (8 files)
+%Notes:Program assumes there are 4 "z" distances under a specific frequency (8 files)
 
 clc
 clear
 clf
 format long
 
-mtx025a=load('z = 0.25 above.txt'); %data associated with specific __tropy, permiability and frequency (150 values)
-mtx025b=load('z = 0.25 below.txt');
-mtx050a=load('z = 0.50 above.txt');
-mtx050b=load('z = 0.50 below.txt');
-mtx075a=load('z = 0.75 above.txt');
-mtx075b=load('z = 0.75 below.txt');
-mtx100a=load('z = 1.00 above.txt');
-mtx100b=load('z = 1.00 below.txt');
+freq=[1,5,10,50,100,500,1000,5000,10000,20000,30000]; %set for frequencies
+f=freq(11); %change for specific frequency desired
+
+mtx025a=load((sprintf('z = 2.500000e-01_at_%d_top.txt',f))); %data associated with specific __tropy, permiability and frequency (150 values)
+mtx025b=load((sprintf('z = 2.500000e-01_at_%d_bot.txt',f)));
+mtx050a=load((sprintf('z = 5.000000e-01_at_%d_top.txt',f)));
+mtx050b=load((sprintf('z = 5.000000e-01_at_%d_bot.txt',f)));
+mtx075a=load((sprintf('z = 7.500000e-01_at_%d_top.txt',f)));
+mtx075b=load((sprintf('z = 7.500000e-01_at_%d_bot.txt',f)));
+mtx100a=load((sprintf('z = 1_at_%d_top.txt',f)));
+mtx100b=load((sprintf('z = 1_at_%d_bot.txt',f)));
 
 r=mtx025a(:,1); %general length matrix
 count=0;
