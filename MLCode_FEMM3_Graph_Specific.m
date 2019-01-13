@@ -18,19 +18,46 @@
 %45-48: 600
 %PhiValues=((FImaginary./FReal)*(180/pi)) %calculation for phase shift
 
-cell=8;
+cell=43;
+
+VCreal_tot_squ=sum(sum(realVC{cell}(1:11,1:29)));
+VCimag_tot_squ=sum(sum(imagVC{cell}(1:11,1:29))); 
+Ereal_tot_squ=sum(sum(realmagE{cell}(1:11,1:29)));
+Eimag_tot_squ=sum(sum(imagmagE{cell}(1:11,1:29)));
+Freal_tot_squ=sum(sum(realF{cell}(1:11,1:29)));
+Fimag_tot_squ=sum(sum(imagF{cell}(1:11,1:29)));
+
+VCreal_tot_vol=pi*VCreal_tot_squ*(1.74^2)*0.66;
+VCimag_tot_vol=pi*VCimag_tot_squ*(1.74^2)*0.66;
+Ereal_tot_vol=pi*Ereal_tot_squ*(1.74^2)*0.66;
+Eimag_tot_vol=pi*Eimag_tot_squ*(1.74^2)*0.66;
+Freal_tot_vol=pi*Freal_tot_squ*(1.74^2)*0.66;
+Fimag_tot_vol=pi*Fimag_tot_squ*(1.74^2)*0.66;
+
+P=(Fimag_tot_vol/Freal_tot_vol);
 
 subplot (3,1,1)
-heatmap(realVC{cell}(1:12,1:30))
+heatmap(realVC{cell}(1:11,1:29))
 colormap('jet')
+title('RealVC')
+grid off
+
+subplot (3,1,2)
+heatmap(realmagE{cell}(1:11,1:29))
+colormap('jet')
+title('RealMagE')
 grid off
 
 subplot (3,1,3)
-[x,y]=meshgrid(0:1:29,0:1:29);
-quiver(x,y,realER{(cell)},realEZ{(cell)})
-axis([-1 30 -1 12]);
-
-subplot (3,1,2)
-heatmap(realmagE{cell}(1:12,1:30))
+heatmap(realF{cell}(1:11,1:29))
 colormap('jet')
+title('RealF')
 grid off
+
+disp(VCreal_tot_vol)
+disp(VCimag_tot_vol)
+disp(Ereal_tot_vol)
+disp(Eimag_tot_vol)
+disp(Freal_tot_vol)
+disp(Fimag_tot_vol)
+disp(P)
