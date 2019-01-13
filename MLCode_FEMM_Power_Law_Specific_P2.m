@@ -9,8 +9,10 @@ clear
 clf
 format long
 
-freq=[1,5,10,50,100,500,1000,5000,10000,20000,30000]; %set for frequencies
-f=freq(11); %change for specific frequency desired
+freq=[0.01,0.02,0.03,0.05,0.1,0.2,0.3,0.5,1,5,10,50,100,500,1000,5000,10000,20000,30000]; %set for frequencies
+fix=9
+f=freq(fix); %change for specific frequency desired
+chart=1;
 
 mtx025a=load((sprintf('z = 2.500000e-01_at_%d_top.txt',f))); %data associated with specific __tropy, permiability and frequency (150 values)
 mtx025b=load((sprintf('z = 2.500000e-01_at_%d_bot.txt',f)));
@@ -120,7 +122,46 @@ FinalMatrix=[FinalMatrix025,FinalMatrix050,FinalMatrix075,FinalMatrix100];
     %1-6:7-8 are 100 real-imag. ...
 FinalMatrixIm=[FinalMatrix(:,2);FinalMatrix(:,4);FinalMatrix(:,6);FinalMatrix(:,8)];
 
-subplot(4,3,3) %plot E-field on all z-value distances
+disp('The resulting data (above) is listed in the following order for each property, respectively:');
+disp('    z=0.25');
+disp('    z=0.50');
+disp('    z=0.75');
+disp('    z=1.00');
+
+ElectricalFieldReal=[FinalMatrix(2,1);FinalMatrix(2,3);FinalMatrix(2,5);FinalMatrix(2,7)]
+ElectricalFieldImaginary=[FinalMatrix(2,2);FinalMatrix(2,4);FinalMatrix(2,6);FinalMatrix(2,8)]
+
+dx1=diff(0.125:0.125:0.375);
+dy1=diff(FinalMatrix(:,1)');
+dx2=diff(0.375:0.125:0.625);
+dy2=diff(FinalMatrix(:,3)');
+dx3=diff(0.625:0.125:0.875);
+dy3=diff(FinalMatrix(:,5)');
+dx4=diff(0.875:0.125:1.125);
+dy4=diff(FinalMatrix(:,7)');
+deriv125re=abs(dy1/dx1); %force derivative calculation (real)
+deriv150re=abs(dy2/dx2);
+deriv175re=abs(dy3/dx3);
+deriv100re=abs(dy4/dx4);
+DerivativeElectricalFieldReal=[deriv125re;deriv150re;deriv175re;deriv100re]
+
+dx5=diff(0.125:0.125:0.375);
+dy5=diff(FinalMatrix(:,2)');
+dx6=diff(0.375:0.125:0.625);
+dy6=diff(FinalMatrix(:,4)');
+dx7=diff(0.625:0.125:0.875);
+dy7=diff(FinalMatrix(:,6)');
+dx8=diff(0.875:0.125:1.125);
+dy8=diff(FinalMatrix(:,8)');
+deriv125im=(dy5/dx5); %force derivative calculation (imag)
+deriv150im=(dy6/dx6);
+deriv175im=(dy7/dx7);
+deriv100im=(dy8/dx8);
+DerivativeElectricalFieldImaginary=[deriv125im;deriv150im;deriv175im;deriv100im]
+
+if chart == 1
+
+subplot(2,2,1) %plot E-field on all z-value distances
 hold on
 plot((0.125:0.125:0.375),FinalMatrix(:,1),'-bo')
 plot((0.375:0.125:0.625),FinalMatrix(:,3),'-bo')
@@ -133,16 +174,7 @@ ylabel('E')
 grid on
 hold off
 
-disp('The resulting data (above) is listed in the following order for each property, respectively:');
-disp('    z=0.25');
-disp('    z=0.50');
-disp('    z=0.74');
-disp('    z=1.00');
-
-ElectricalFieldReal=[FinalMatrix(2,1);FinalMatrix(2,3);FinalMatrix(2,5);FinalMatrix(2,7)]
-ElectricalFieldImaginary=[FinalMatrix(2,2);FinalMatrix(2,4);FinalMatrix(2,6);FinalMatrix(2,8)]
-
-subplot(4,3,6) %plot E-field on main z-value distances
+subplot(2,2,2) %plot E-field on main z-value distances
 hold on
 f=fit((0.25:0.25:1)',ElectricalFieldReal,'exp2');
 plot(f,(0.25:0.25:1),ElectricalFieldReal,'ob');
@@ -155,7 +187,7 @@ ylabel('E')
 grid on
 legend off
 hold off
-
+%{
 subplot(4,3,1); %plot Series Integral, z=0.25
 hold on
 plot(r,SeriesIntegralMatrix025(:,3),'-b')
@@ -195,76 +227,8 @@ xlabel('r')
 ylabel('("rho"*r)/(r^2 + z^2)^3/2')
 grid on
 hold off
-
-subplot(4,3,4); %plot Surface Charge, z=0.25
-hold on
-plot(r,SurfChrgMatrix(:,1),'-b')
-plot(r,SurfChrgMatrix(:,2),'-b')
-title('"rho" vs. r (z=0.25)')
-xlabel('r')
-ylabel('"rho"')
-grid on
-hold off
-
-subplot(4,3,5); %plot Surface Charge, z=0.50
-hold on
-plot(r,SurfChrgMatrix(:,3),'-r')
-plot(r,SurfChrgMatrix(:,4),'-r')
-title('"rho" vs. r (z=0.50)')
-xlabel('r')
-ylabel('"rho"')
-grid on
-hold off
-
-subplot(4,3,10); %plot Surface Charge, z=0.75
-hold on
-plot(r,SurfChrgMatrix(:,5),'-c')
-plot(r,SurfChrgMatrix(:,6),'-c')
-title('"rho" vs. r (z=0.75)')
-xlabel('r')
-ylabel('"rho"')
-grid on
-hold off
-
-subplot(4,3,11); %plot Surface Charge, z=1.00
-hold on
-plot(r,SurfChrgMatrix(:,7),'-g')
-plot(r,SurfChrgMatrix(:,8),'-g')
-title('"rho" vs. r (z=1.00)')
-xlabel('r')
-ylabel('"rho"')
-grid on
-hold off
-
-dx1=diff(0.125:0.125:0.375);
-dy1=diff(FinalMatrix(:,1)');
-dx2=diff(0.375:0.125:0.625);
-dy2=diff(FinalMatrix(:,3)');
-dx3=diff(0.625:0.125:0.875);
-dy3=diff(FinalMatrix(:,5)');
-dx4=diff(0.875:0.125:1.125);
-dy4=diff(FinalMatrix(:,7)');
-deriv125re=abs(dy1/dx1); %force derivative calculation (real)
-deriv150re=abs(dy2/dx2);
-deriv175re=abs(dy3/dx3);
-deriv100re=abs(dy4/dx4);
-DerivativeElectricalFieldReal=[deriv125re;deriv150re;deriv175re;deriv100re]
-
-dx5=diff(0.125:0.125:0.375);
-dy5=diff(FinalMatrix(:,2)');
-dx6=diff(0.375:0.125:0.625);
-dy6=diff(FinalMatrix(:,4)');
-dx7=diff(0.625:0.125:0.875);
-dy7=diff(FinalMatrix(:,6)');
-dx8=diff(0.875:0.125:1.125);
-dy8=diff(FinalMatrix(:,8)');
-deriv125im=(dy5/dx5); %force derivative calculation (imag)
-deriv150im=(dy6/dx6);
-deriv175im=(dy7/dx7);
-deriv100im=(dy8/dx8);
-DerivativeElectricalFieldImaginary=[deriv125im;deriv150im;deriv175im;deriv100im]
-
-subplot(4,3,9); %plot Force Derivative both real and imag.
+%}
+subplot(2,2,3); %plot Force Derivative both real and imag.
 hold on
 f3=fit((0.25:0.25:1)',DerivativeElectricalFieldReal,'exp2');
 f4=fit((0.25:0.25:1)',DerivativeElectricalFieldImaginary,'exp2');
@@ -277,7 +241,7 @@ grid on
 legend off
 hold off
 
-subplot(4,3,12); %plot Force Derivative Ratio
+subplot(2,2,4); %plot Force Derivative Ratio
 hold on
 f5=fit((0.25:0.25:1)',(DerivativeElectricalFieldImaginary./DerivativeElectricalFieldReal),'exp2');
 plot(f5,(0.25:0.25:1)',(DerivativeElectricalFieldImaginary./DerivativeElectricalFieldReal),'ob')
@@ -287,5 +251,54 @@ ylabel('|(dIm[E]/dz)/(dRe[E]/dz)|')
 grid on
 legend off
 hold off
+
+f=freq(fix);
+saveas(gcf,(sprintf('E_F_etc_freq=%d.jpg',f)));
+
+elseif chart == 2
+
+subplot(2,2,1); %plot Surface Charge, z=0.25
+hold on
+plot(r,SurfChrgMatrix(:,1),'-b')
+plot(r,SurfChrgMatrix(:,2),'-b')
+title('"rho" vs. r (z=0.25)')
+xlabel('r')
+ylabel('"rho"')
+grid on
+hold off
+
+subplot(2,2,2); %plot Surface Charge, z=0.50
+hold on
+plot(r,SurfChrgMatrix(:,3),'-r')
+plot(r,SurfChrgMatrix(:,4),'-r')
+title('"rho" vs. r (z=0.50)')
+xlabel('r')
+ylabel('"rho"')
+grid on
+hold off
+
+subplot(2,2,3); %plot Surface Charge, z=0.75
+hold on
+plot(r,SurfChrgMatrix(:,5),'-c')
+plot(r,SurfChrgMatrix(:,6),'-c')
+title('"rho" vs. r (z=0.75)')
+xlabel('r')
+ylabel('"rho"')
+grid on
+hold off
+
+subplot(2,2,4); %plot Surface Charge, z=1.00
+hold on
+plot(r,SurfChrgMatrix(:,7),'-g')
+plot(r,SurfChrgMatrix(:,8),'-g')
+title('"rho" vs. r (z=1.00)')
+xlabel('r')
+ylabel('"rho"')
+grid on
+hold off
+
+saveas(gcf,(sprintf('SC_freq=%d.jpg',f)));
+
+end
 
 PhiValues=((DerivativeElectricalFieldImaginary./DerivativeElectricalFieldReal)*(180/pi)) %calculation for phase shift
