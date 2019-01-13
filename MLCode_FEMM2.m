@@ -62,7 +62,7 @@ while (movement<=3) %z-distance movement loop
     hori1=0;
     vert1=0;
         
-        while (hori1<=12 && hori2<=12) %horizontal volumetric scan loop
+        while (hori1<=12) %horizontal volumetric scan loop
          co_selectpoint(0.01,0.06*hori1);
          co_selectpoint(1.91,0.06*hori1);
          co_makeplot(5,320,(sprintf('z = %d_hori%d_at_%d.txt',dist,hori1,freq)),1);
